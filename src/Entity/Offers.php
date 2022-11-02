@@ -37,6 +37,9 @@ class Offers
     #[ORM\ManyToMany(targetEntity: users::class, inversedBy: 'offers')]
     private Collection $users;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $updateDate = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -139,6 +142,18 @@ class Offers
     public function removeUser(users $user): self
     {
         $this->users->removeElement($user);
+
+        return $this;
+    }
+
+    public function getUpdateDate(): ?\DateTimeInterface
+    {
+        return $this->updateDate;
+    }
+
+    public function setUpdateDate(?\DateTimeInterface $updateDate): self
+    {
+        $this->updateDate = $updateDate;
 
         return $this;
     }
