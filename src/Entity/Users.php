@@ -52,6 +52,9 @@ class Users
     #[ORM\ManyToMany(targetEntity: Offers::class, mappedBy: 'users')]
     private Collection $offers;
 
+    #[ORM\Column(type: Types::ARRAY)]
+    private array $roles = [];
+
     public function __construct()
     {
         $this->companies = new ArrayCollection();
@@ -236,6 +239,18 @@ class Users
         if ($this->offers->removeElement($offer)) {
             $offer->removeUser($this);
         }
+
+        return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
 
         return $this;
     }
