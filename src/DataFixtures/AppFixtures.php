@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Skills;
 use App\Entity\Users;
 use App\Entity\Offers;
 use App\Entity\Companies;
@@ -15,16 +16,25 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
+
+        $skills = ["PHP", "JS", "HTML", "CSS", "C", "C++", "C#", "Java", "Python", "Ruby", "Swift", "Go", "Rust", "Kotlin", "Scala", "Perl", "R", "SQL", "Bash", "PowerShell", "Ruby on Rails", "Laravel", "Symfony", "React", "Angular", "Vue", "Node", "Django", "Flask", "Spring", "Express", "Docker", "Kubernetes", "AWS", "Azure", "GCP", "Heroku", "Netlify", "Vercel", "Firebase", "MongoDB", "MySQL", "PostgreSQL", "Redis", "ElasticSearch", "Neo4j", "Cassandra", "RabbitMQ", "Kafka"];
+        // Add skills to table skills
+        foreach ($skills as $new_skill) {
+            $skill = new Skills();
+            $skill->setName($new_skill);
+            $manager->persist($skill);
+        }
+        $manager->flush();
+
         // Create three users (we'll use them in the next section)
         $user1 = new Users();
         $user1->setFirstName('firstuser');
         $user1->setLastName('firstuser');
         $user1->setAge(20);
-        $user1->setZipcode(75000);
+        $user1->setZipcode(75018);
         $user1->setEmail('firstuser@gmail.com');
         $user1->setPassword('firstuserpassword');
         $user1->setDescription("Hello I'm first user and I'm a huge worker");
-        $user1->setSkills(["Flutter", "PHP", "Symfony", "React", "Angular"]);
         $user1->setRoles(["ROLE_USER"]);
         $user1->setCreationDate(new \DateTime());
         $user1->setUpdateDate(new \DateTime());
@@ -38,7 +48,6 @@ class AppFixtures extends Fixture
         $user2->setEmail('seconduser@gmail.com');
         $user2->setPassword('seconduserpassword');
         $user2->setDescription("Hello I'm second user and I'm a great thinker");
-        $user2->setSkills(["JavaScript", "Ruby", "Ruby on Rails", "React", "Vue"]);
         $user2->setRoles(["ROLE_USER"]);
         $user2->setCreationDate(new \DateTime());
         $user2->setUpdateDate(new \DateTime());
@@ -52,11 +61,23 @@ class AppFixtures extends Fixture
         $user3->setEmail('orchidee@flower.com');
         $user3->setPassword('orchidee');
         $user3->setDescription("Hello I'm Orchidée and I'm a great killer");
-        $user3->setSkills(["Java", "Ruby", "PHP", "React", "Flutter"]);
         $user3->setRoles(["ROLE_ADMIN"]);
         $user3->setCreationDate(new \DateTime());
         $user3->setUpdateDate(new \DateTime());
         $manager->persist($user3);
+
+        // Add 5 skills to each user (randomly)
+        $skills = $manager->getRepository(Skills::class)->findAll();
+        // Add 5 random skills (from 0 to length of skills) to each user
+        foreach ([$user1, $user2, $user3] as $user) {
+            for ($i = 0; $i < rand(1,5); $i++) {
+                $user->addSkill($skills[rand(0, count($skills) - 1)]);
+            }
+        }
+        // Add to user 1 2 and 3 the same skills
+        $user1->addSkill($skills[0]);
+        $user1->addSkill($skills[0]);
+        $user1->addSkill($skills[0]);
 
         $company1 = new Companies();
         $company1->setName('Company 1');
@@ -81,7 +102,6 @@ class AppFixtures extends Fixture
         $jobOffer1 = new Offers();
         $jobOffer1->setName('Job offer 1');
         $jobOffer1->setDescription('This is the first job offer');
-        $jobOffer1->setSkills(["PHP", "Symfony", "React", "Angular"]);
         $jobOffer1->setCompanyId($company1);
         $jobOffer1->setCreationDate(new \DateTime());
         $jobOffer1->setUpdateDate(new \DateTime());
@@ -91,7 +111,6 @@ class AppFixtures extends Fixture
         $jobOffer2 = new Offers();
         $jobOffer2->setName('Job offer 2');
         $jobOffer2->setDescription('This is the second job offer');
-        $jobOffer2->setSkills(["Ruby on Rails", "Ruby", "Angular"]);
         $jobOffer2->setCompanyId($company1);
         $jobOffer2->setCreationDate(new \DateTime());
         $jobOffer2->setUpdateDate(new \DateTime());
@@ -101,7 +120,6 @@ class AppFixtures extends Fixture
         $jobOffer3 = new Offers();
         $jobOffer3->setName('Job offer 3');
         $jobOffer3->setDescription('This is the third job offer');
-        $jobOffer3->setSkills(["JavaFX"]);
         $jobOffer3->setCompanyId($company2);
         $jobOffer3->setCreationDate(new \DateTime());
         $jobOffer3->setUpdateDate(new \DateTime());
@@ -112,13 +130,23 @@ class AppFixtures extends Fixture
         $jobOffer4 = new Offers();
         $jobOffer4->setName('Job offer 4');
         $jobOffer4->setDescription('This is the fourth job offer');
-        $jobOffer4->setSkills(["Angular"]);
         $jobOffer4->setCompanyId($company2);
         $jobOffer4->setCreationDate(new \DateTime());
         $jobOffer4->setUpdateDate(new \DateTime());
         $jobOffer4->setEndDate(new \DateTime('-1 month'));
         $manager->persist($jobOffer4);
 
+        // Add to each job offer 5 skills (randomly)
+        $skills = $manager->getRepository(Skills::class)->findAll();
+        // Add 5 random skills (from 0 to length of skills) to each job offer
+        foreach ([$jobOffer1, $jobOffer2, $jobOffer3, $jobOffer4] as $jobOffer) {
+            for ($i = 0; $i < rand(1, 4); $i++) {
+                $jobOffer->addSkill($skills[rand(0, count($skills) - 1)]);
+            }
+        }
+        // Add to job offer 3 and 2 one skill that corresponds to the user's skills
+        $jobOffer3->addSkill($skills[0]);
+        $jobOffer2->addSkill($skills[0]);
         $manager->flush();
     }
 }

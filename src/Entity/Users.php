@@ -7,9 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UsersRepository::class)]
-class Users
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+class Users implements UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -37,9 +40,6 @@ class Users
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::ARRAY)]
-    private array $skills = [];
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creationDate = null;
 
@@ -55,10 +55,19 @@ class Users
     #[ORM\Column(type: Types::ARRAY)]
     private array $roles = [];
 
+    #[ORM\ManyToMany(targetEntity: Skills::class, mappedBy: 'users')]
+    private Collection $skills;
+
     public function __construct()
     {
         $this->companies = new ArrayCollection();
         $this->offers = new ArrayCollection();
+        $this->skills = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->firstName . ' ' . $this->lastName;
     }
 
     public function getId(): ?int
@@ -146,18 +155,6 @@ class Users
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getSkills(): array
-    {
-        return $this->skills;
-    }
-
-    public function setSkills(array $skills): self
-    {
-        $this->skills = $skills;
 
         return $this;
     }
@@ -251,6 +248,42 @@ class Users
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function eraseCredentials()
+    {
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return "";
+    }
+
+    /**
+     * @return Collection<int, Skills>
+     */
+    public function getSkills(): Collection
+    {
+        return $this->skills;
+    }
+
+    public function addSkill(Skills $skill): self
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills->add($skill);
+            $skill->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSkill(Skills $skill): self
+    {
+        if ($this->skills->removeElement($skill)) {
+            $skill->removeUser($this);
+        }
 
         return $this;
     }
