@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello IndexController!{% endblock %}
+
+{% block body %}
+    <div class="flex justify-center">
+        <div class="w-5/6 flex flex-col justify-between">
+            <h2 class="text-5xl font-bold italic">{{ offers|length }} offres chez {{ company.name }}</h2>
+            <div class="flex flex-wrap justify-around">
+                {% for offer in offers %}
+                    <a href="{{ path('app_show_offer', {'id': offer.id}) }}" class="flex flex-col items-center bg-white rounded-lg my-5 border shadow-md md:flex-row hover:bg-gray-100">
+                        <img class="object-cover w-32 p-5 rounded-3xl"
+                             src="https://logo.clearbit.com/{{ offer.companyId.name }}.com" alt="">
+                        <div class="flex flex-col justify-between p-4 leading-normal">
+                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ offer.name }}
+                                chez <span class="italic text-lg">{{ offer.companyId.name }}</span></h5>
+                            <p class="mb-3 font-normal text-gray-700">{{ offer.description }}</p>
+                            <div>
+                                {% for skill in offer.skills %}
+                                    {% if skill in user.skills %}
+                                        <span class="inline-block bg-green-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">#{{ skill.name }}</span>
+                                    {% else %}
+                                        <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">#{{ skill.name }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

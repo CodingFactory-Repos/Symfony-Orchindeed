@@ -28,6 +28,7 @@ class IndexController extends AbstractController
         // Get the last registered user
         $user = $doctrine->getRepository(Users::class)->findOneBy([], ['id' => 'DESC']);
         $offers = $doctrine->getRepository(Offers::class)->findAll();
+        $companies = $doctrine->getRepository(Companies::class)->findAll();
 
         $offersInSameZipcode = [];
         foreach ($offers as $offer) {
@@ -74,6 +75,7 @@ class IndexController extends AbstractController
         return $this->render('index/index.html.twig', [
             'user' => $user,
             'offers' => $offersInSameZipcode,
+            'companies' => $companies,
         ]);
     }
 }
