@@ -34,15 +34,15 @@ class Offers
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creationDate = null;
 
-    #[ORM\ManyToMany(targetEntity: users::class, inversedBy: 'offers')]
-    private Collection $users;
+    #[ORM\ManyToMany(targetEntity: Users::class, inversedBy: 'offers')]
+    private Collection $Users;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updateDate = null;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->Users = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -123,25 +123,25 @@ class Offers
     }
 
     /**
-     * @return Collection<int, users>
+     * @return Collection<int, Users>
      */
     public function getUsers(): Collection
     {
-        return $this->users;
+        return $this->Users;
     }
 
-    public function addUser(users $user): self
+    public function addUser(Users $user): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
+        if (!$this->Users->contains($user)) {
+            $this->Users->add($user);
         }
 
         return $this;
     }
 
-    public function removeUser(users $user): self
+    public function removeUser(Users $user): self
     {
-        $this->users->removeElement($user);
+        $this->Users->removeElement($user);
 
         return $this;
     }

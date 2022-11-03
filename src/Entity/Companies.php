@@ -17,7 +17,7 @@ class Companies
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'companies')]
-    private ?users $user_id = null;
+    private ?Users $user_id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -47,12 +47,12 @@ class Companies
         return $this->id;
     }
 
-    public function getUserId(): ?users
+    public function getUserId(): ?Users
     {
         return $this->user_id;
     }
 
-    public function setUserId(?users $user_id): self
+    public function setUserId(?Users $user_id): self
     {
         $this->user_id = $user_id;
 
