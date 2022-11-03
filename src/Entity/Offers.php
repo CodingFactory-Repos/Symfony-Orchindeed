@@ -25,9 +25,6 @@ class Offers
     #[ORM\Column(length: 255)]
     private ?string $description = null;
 
-    #[ORM\Column(type: Types::ARRAY)]
-    private array $skills = [];
-
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $endDate = null;
 
@@ -40,9 +37,13 @@ class Offers
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updateDate = null;
 
+    #[ORM\ManyToMany(targetEntity: Skills::class, mappedBy: 'offers')]
+    private Collection $skills;
+
     public function __construct()
     {
         $this->Users = new ArrayCollection();
+        $this->skills = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -82,18 +83,6 @@ class Offers
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getSkills(): array
-    {
-        return $this->skills;
-    }
-
-    public function setSkills(array $skills): self
-    {
-        $this->skills = $skills;
 
         return $this;
     }
@@ -154,6 +143,33 @@ class Offers
     public function setUpdateDate(?\DateTimeInterface $updateDate): self
     {
         $this->updateDate = $updateDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Skills>
+     */
+    public function getSkills(): Collection
+    {
+        return $this->skills;
+    }
+
+    public function addSkill(Skills $skill): self
+    {
+        if (!$this->skills->contains($skill)) {
+            $this->skills->add($skill);
+            $skill->addOffer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSkill(Skills $skill): self
+    {
+        if ($this->skills->removeElement($skill)) {
+            $skill->removeOffer($this);
+        }
 
         return $this;
     }
