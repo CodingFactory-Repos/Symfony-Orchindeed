@@ -34,7 +34,7 @@ class Offers
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creationDate = null;
 
-    #[ORM\ManyToMany(targetEntity: users::class, inversedBy: 'offers')]
+    #[ORM\ManyToMany(targetEntity: Users::class, inversedBy: 'offers')]
     private Collection $users;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
@@ -123,14 +123,14 @@ class Offers
     }
 
     /**
-     * @return Collection<int, users>
+     * @return Collection<int, Users>
      */
     public function getUsers(): Collection
     {
         return $this->users;
     }
 
-    public function addUser(users $user): self
+    public function addUser(Users $user): self
     {
         if (!$this->users->contains($user)) {
             $this->users->add($user);
@@ -139,7 +139,7 @@ class Offers
         return $this;
     }
 
-    public function removeUser(users $user): self
+    public function removeUser(Users $user): self
     {
         $this->users->removeElement($user);
 
