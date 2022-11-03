@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello IndexController!{% endblock %}
+
+{% block body %}
+    <div class="flex justify-center">
+        <div class="w-5/6">
+            <div class="w-full flex justify-between bg-white rounded-lg my-5 border shadow-md md:flex-row hover:bg-gray-100">
+                <div class="flex flex-col w-7/12 justify-between p-4 leading-normal">
+                    <h2 class="mb-2 tracking-tight text-gray-900 text-5xl font-bold italic">{{ offer.name }}<span
+                                class="italic text-lg"> chez {{ offer.companyId.name }}</span></h2>
+                    <div class="mb-10">
+                        {% for skill in offer.skills %}
+                            {% if skill in user.skills %}
+                                <span class="inline-block bg-green-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">#{{ skill.name }}</span>
+                            {% else %}
+                                <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">#{{ skill.name }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <h3 class="text-3xl font-bold italic">{{ offer.companyId.name }} c'est quoi ?</h3>
+                    <p class="mb-3 font-normal text-gray-700">{{ offer.companyId.description }}</p>
+                    <h3 class="text-3xl font-bold italic">Pourquoi être "{{ offer.name }}" chez nous ?</h3>
+                    <p class="mb-3 font-normal text-gray-700">{{ offer.description }}</p>
+                    <h3 class="text-3xl font-bold italic">Êtes vous vraiment compatible avec nous ?</h3>
+                    <p class="mb-3 font-normal text-gray-700">{{ user.firstName }} d'après vos compétences, vous êtes compatible a {{ compatibilityPercentage }}% pour ce poste</p>
+                </div>
+
+                <div class="w-full h-min m-10 max-w-sm bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+                    <div class="flex flex-col items-center py-10">
+                        <img class="mb-3 w-24 h-24 rounded-full shadow-lg"
+                             src="https://logo.clearbit.com/{{ offer.companyId.name }}.com" alt="Bonnie image">
+                        <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white">{{ offer.companyId.name }}</h5>
+                        <span class="text-sm px-5 text-gray-500 dark:text-gray-400 text-center">L'équipe {{ offer.companyId.name }} aimerais vraiment te voir dans leurs équipe ! Rejoins-nous {{ user.firstName }}</span>
+                        <div class="flex mt-4 space-x-3 md:mt-6">
+                            <a href="#"
+                               class="inline-flex items-center py-2 px-4 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Postuler</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
