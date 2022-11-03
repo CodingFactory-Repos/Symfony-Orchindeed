@@ -34,7 +34,7 @@ class CompaniesController extends AbstractController
             $entityManager->persist($companies);
             $entityManager->flush();
 
-            return $this->redirectToRoute('task_success');
+            return $this->redirectToRoute('app_index');
         }
 
         return $this->render('companies/index.html.twig', [
