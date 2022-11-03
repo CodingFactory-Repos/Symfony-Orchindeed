@@ -3,18 +3,72 @@
 {% block title %}Hello IndexController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="flex items-center flex-col">
+        <div class="w-5/6 flex justify-between">
+            <div class="w-8/12">
+                <h2 class="text-5xl font-bold italic">It's a Match !!!</h2>
+                <p class="text-lg italic">Ils vous veulent, profitez-en</p>
+                {% for offer in offers %}
+                    <a href="{{ path('app_show_offer', {'id': offer.id}) }}" class="flex flex-col items-center bg-white rounded-lg my-5 border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100">
+                        <img class="object-cover w-32 p-5 rounded-3xl"
+                             src="https://logo.clearbit.com/{{ offer.companyId.name }}.com" alt="">
+                        <div class="flex flex-col justify-between p-4 leading-normal">
+                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ offer.name }}
+                                chez <span class="italic text-lg">{{ offer.companyId.name }}</span></h5>
+                            <p class="mb-3 font-normal text-gray-700">{{ offer.description }}</p>
+                            <div>
+                                {% for skill in offer.skills %}
+                                    {% if skill in user.skills %}
+                                        <span class="inline-block bg-green-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">#{{ skill.name }}</span>
+                                    {% else %}
+                                        <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">#{{ skill.name }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+            <div class="w-6/12">
+                <div class="w-full max-w-sm bg-white rounded-lg border border-gray-200 shadow-md">
+                    <div class="flex flex-col items-center py-10">
+                        <h5 class="mb-1 text-xl font-medium text-gray-900">{{ user.firstName }} {{ user.lastName }}</h5>
+                        <span class="text-sm text-gray-500">{{ user.description }}</span>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/Users/loule/SynologyDrive/Projects/Orchindeed/Project/src/Controller/IndexController.php'|file_link(0) }}">src/Controller/IndexController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/Users/loule/SynologyDrive/Projects/Orchindeed/Project/templates/index/index.html.twig'|file_link(0) }}">templates/index/index.html.twig</a></code></li>
-    </ul>
-</div>
+                        <div class="my-4">
+                            {% for skill in user.skills %}
+                                <kbd class="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">{{ skill.name }}</kbd>
+                            {% endfor %}
+                        </div>
+
+                        <div class="flex space-x-3">
+                            <a href="#"
+                               class="inline-flex items-center py-2 px-4 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">Changer
+                                mon Profil</a>
+                            <a href="#"
+                               class="inline-flex items-center py-2 px-4 text-sm font-medium text-center text-gray-900 bg-white rounded-lg border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200">Mes
+                                Message</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="w-5/6 flex justify-between">
+            <div class="w-8/12">
+                <h2 class="text-5xl font-bold italic">Les entreprises</h2>
+                <p class="text-lg italic">Vous en cherchez une en particulier ?</p>
+                {% for company in companies %}
+                    <a href="{{ path('app_show_company', {'id': company.id}) }}" class="flex flex-col items-center bg-white rounded-lg my-5 border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100">
+                        <img class="object-cover w-32 p-5 rounded-3xl"
+                             src="https://logo.clearbit.com/{{ company.name }}.com" alt="">
+                        <div class="flex flex-col justify-between p-4 leading-normal">
+                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ company.name }}</h5>
+                            <p class="mb-3 font-normal text-gray-700">{{ company.description }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
