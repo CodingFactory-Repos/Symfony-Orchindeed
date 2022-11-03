@@ -14,6 +14,12 @@ use Doctrine\Persistence\ObjectManager;
 
 class AppFixtures extends Fixture
 {
+
+    public function hashPassword($password)
+    {
+        $hash = password_hash($password, PASSWORD_BCRYPT);
+        return $hash;
+    }
     public function load(ObjectManager $manager): void
     {
 
@@ -33,7 +39,7 @@ class AppFixtures extends Fixture
         $user1->setAge(20);
         $user1->setZipcode(75018);
         $user1->setEmail('firstuser@gmail.com');
-        $user1->setPassword('firstuserpassword');
+        $user1->setPassword($this->hashPassword('firstuserpassword'));
         $user1->setDescription("Hello I'm first user and I'm a huge worker");
         $user1->setRoles(["ROLE_USER"]);
         $user1->setCreationDate(new \DateTime());
@@ -46,7 +52,7 @@ class AppFixtures extends Fixture
         $user2->setAge(20);
         $user2->setZipcode(30072);
         $user2->setEmail('seconduser@gmail.com');
-        $user2->setPassword('seconduserpassword');
+        $user2->setPassword($this->hashPassword('seconduserpassword'));
         $user2->setDescription("Hello I'm second user and I'm a great thinker");
         $user2->setRoles(["ROLE_USER"]);
         $user2->setCreationDate(new \DateTime());
@@ -59,7 +65,7 @@ class AppFixtures extends Fixture
         $user3->setAge(24);
         $user3->setZipcode(31000);
         $user3->setEmail('orchidee@flower.com');
-        $user3->setPassword('orchidee');
+        $user3->setPassword($this->hashPassword('orchidee'));
         $user3->setDescription("Hello I'm Orchidée and I'm a great killer");
         $user3->setRoles(["ROLE_ADMIN"]);
         $user3->setCreationDate(new \DateTime());
