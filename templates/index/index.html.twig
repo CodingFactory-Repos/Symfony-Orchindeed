@@ -5,29 +5,54 @@
 {% block body %}
     <div class="flex items-center flex-col">
         <div class="w-5/6 flex justify-between">
-            <div class="w-8/12">
-                <h2 class="text-5xl font-bold italic">It's a Match !!!</h2>
-                <p class="text-lg italic">Ils vous veulent, profitez-en</p>
-                {% for offer in offers %}
-                    <a href="{{ path('app_show_offer', {'id': offer.id}) }}" class="flex flex-col items-center bg-white rounded-lg my-5 border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100">
-                        <img class="object-cover w-32 p-5 rounded-3xl"
-                             src="https://logo.clearbit.com/{{ offer.companyId.name }}.com" alt="">
-                        <div class="flex flex-col justify-between p-4 leading-normal">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ offer.name }}
-                                chez <span class="italic text-lg">{{ offer.companyId.name }}</span></h5>
-                            <p class="mb-3 font-normal text-gray-700">{{ offer.description }}</p>
-                            <div>
-                                {% for skill in offer.skills %}
-                                    {% if skill in user.skills %}
-                                        <span class="inline-block bg-green-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">#{{ skill.name }}</span>
-                                    {% else %}
-                                        <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">#{{ skill.name }}</span>
-                                    {% endif %}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </a>
-                {% endfor %}
+            <div class="w-full mb-10">
+                {% if(isOwner == false) %}
+                    <div class="w-8/12">
+                        <h2 class="text-5xl font-bold italic">It's a Match !!!</h2>
+                        <p class="text-lg italic">Ils vous veulent, profitez-en</p>
+                        {% for offer in offers %}
+                            <a href="{{ path('app_show_offer', {'id': offer.id}) }}"
+                               class="flex flex-col items-center bg-white rounded-lg my-5 border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100">
+                                <img class="object-cover w-32 p-5 rounded-3xl"
+                                     src="https://logo.clearbit.com/{{ offer.companyId.name }}.com" alt="">
+                                <div class="flex flex-col justify-between p-4 leading-normal">
+                                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ offer.name }}
+                                       <span class="italic text-lg"> chez {{ offer.companyId.name }}</span></h5>
+                                    <p class="mb-3 font-normal text-gray-700">{{ offer.description }}</p>
+                                    <div>
+                                        {% for skill in offer.skills %}
+                                            {% if skill in user.skills %}
+                                                <span class="inline-block bg-green-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">#{{ skill.name }}</span>
+                                            {% else %}
+                                                <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">#{{ skill.name }}</span>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="w-8/12">
+                        <h2 class="text-5xl font-bold italic">Mes entreprises</h2>
+                        <p class="text-lg italic">Ici toute tes superbes marques qui tue</p>
+                        {% for company in myCompanies %}
+                            <a href="{{ path('app_show_company', {'id': company.id}) }}"
+                               class="flex flex-col items-center bg-white rounded-lg my-5 border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100">
+                                <img class="object-cover w-32 p-5 rounded-3xl"
+                                     src="https://logo.clearbit.com/{{ company.name }}.com" alt="">
+                                <div class="flex flex-col justify-between p-4 leading-normal">
+                                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ company.name }}</h5>
+                                    <p class="mb-3 font-normal text-gray-700">{{ company.description }}</p>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+
+                    <a href="{{ path('app_companies') }}"
+                   class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Ajouter
+                    une autre entreprise</a>
+                {% endif %}
             </div>
 
             <div class="w-6/12">

@@ -3,27 +3,31 @@
 {% block title %}Hello IndexController!{% endblock %}
 
 {% block body %}
-    <style>
-        .form div {
-            margin-bottom: 10px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form div input {
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            padding: 5px;
-        }
-    </style>
     <div class="flex items-center flex-col">
         <div class="w-5/6 flex justify-between">
             <div class="w-full">
                 <h2 class="text-5xl font-bold italic">Tu cherche ta future pépite pour ton équipe ?</h2>
-                <p class="text-lg italic">Ils cherches, ils trouveront chez vous !</p>
-                <div class="my-10 form">
+                <p class="text-lg italic">Ils cherchent, ils trouveront chez vous !</p>
+                <div class="my-10 form w-2/4">
                     {{ form_start(form) }}
-                    {{ form_widget(form) }}
+
+                    <div class="mb-6">
+                        {{ form_label(form.name,null, {'label_attr': {'class': 'block mb-2 text-sm font-medium text-gray-900 '}}) }}
+                        {{ form_widget(form.name, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'}}) }}
+                    </div>
+                    <div class="mb-6">
+                        {{ form_label(form.description,null, {'label_attr': {'class': 'block mb-2 text-sm font-medium text-gray-900 '}}) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'}}) }}
+                    </div>
+                    <div class="mb-6">
+                        {{ form_label(form.zipcode,null, {'label_attr': {'class': 'block mb-2 text-sm font-medium text-gray-900 '}}) }}
+                        {{ form_widget(form.zipcode, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'}}) }}
+                    </div>
+
+                    <div class="mb-6 flex justify-center">
+                        {{ form_widget(form.submit, {'attr': {'class': 'text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2'}}) }}
+                    </div>
+
                     {{ form_end(form) }}
                 </div>
             </div>

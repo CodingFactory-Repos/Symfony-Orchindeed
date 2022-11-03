@@ -16,7 +16,7 @@ class IndexController extends AbstractController
     #[Route('/', name: 'app_index')]
     public function index(EntityManagerInterface $doctrine): Response
     {
-        if($this->getUser() === null) {
+        if ($this->getUser() === null) {
             return $this->redirectToRoute('app_login');
         }
 
@@ -25,52 +25,61 @@ class IndexController extends AbstractController
         $offers = $doctrine->getRepository(Offers::class)->findAll();
         $companies = $doctrine->getRepository(Companies::class)->findAll();
 
+        $isOwner = !(count($doctrine->getRepository(Companies::class)->findBy(['user_id' => $this->getUser()->getId()])) === 0);
         $offersInSameZipcode = [];
-        foreach ($offers as $offer) {
-            $company = $doctrine->getRepository(Companies::class)->find($offer->getCompanyId());
-            if (substr($company->getZipcode(), 0, 2) == substr($user->getZipcode(), 0, 2)) {
-                $offersInSameZipcode[] = $offer;
-            }
-        }
+        $myCompanies = [];
 
-        // Check if the user have more 3 skills in common with the offer
-        foreach($offersInSameZipcode as $key => $offer) {
-            $skills = $offer->getSkills();
-            $skillsCount = 0;
-            foreach($skills as $skill) {
-                if($user->getSkills()->contains($skill)) {
-                    $skillsCount++;
+        if (!$isOwner) {
+            foreach ($offers as $offer) {
+                $company = $doctrine->getRepository(Companies::class)->find($offer->getCompanyId());
+                if (substr($company->getZipcode(), 0, 2) == substr($user->getZipcode(), 0, 2)) {
+                    $offersInSameZipcode[] = $offer;
                 }
             }
-            if($skillsCount < 1) {
-                unset($offersInSameZipcode[$key]);
-            }
-        }
 
-        // Place on the top the offers with more skills in common
-        usort($offersInSameZipcode, function($a, $b) use ($user) {
-            $skillsA = $a->getSkills();
-            $skillsB = $b->getSkills();
-            $skillsCountA = 0;
-            $skillsCountB = 0;
-            foreach($skillsA as $skill) {
-                if($user->getSkills()->contains($skill)) {
-                    $skillsCountA++;
+            // Check if the user have more 3 skills in common with the offer
+            foreach ($offersInSameZipcode as $key => $offer) {
+                $skills = $offer->getSkills();
+                $skillsCount = 0;
+                foreach ($skills as $skill) {
+                    if ($user->getSkills()->contains($skill)) {
+                        $skillsCount++;
+                    }
+                }
+                if ($skillsCount < 1) {
+                    unset($offersInSameZipcode[$key]);
                 }
             }
-            foreach($skillsB as $skill) {
-                if($user->getSkills()->contains($skill)) {
-                    $skillsCountB++;
+
+            // Place on the top the offers with more skills in common
+            usort($offersInSameZipcode, function ($a, $b) use ($user) {
+                $skillsA = $a->getSkills();
+                $skillsB = $b->getSkills();
+                $skillsCountA = 0;
+                $skillsCountB = 0;
+                foreach ($skillsA as $skill) {
+                    if ($user->getSkills()->contains($skill)) {
+                        $skillsCountA++;
+                    }
                 }
-            }
-            return $skillsCountB <=> $skillsCountA;
-        });
+                foreach ($skillsB as $skill) {
+                    if ($user->getSkills()->contains($skill)) {
+                        $skillsCountB++;
+                    }
+                }
+                return $skillsCountB <=> $skillsCountA;
+            });
+        } else {
+            $myCompanies = $doctrine->getRepository(Companies::class)->findBy(['user_id' => $this->getUser()->getId()]);
+        }
 
         // Return $user and $offersInSameZipcode (with the companies) to the view
         return $this->render('index/index.html.twig', [
             'user' => $user,
             'offers' => $offersInSameZipcode,
             'companies' => $companies,
+            'myCompanies' => $myCompanies,
+            'isOwner' => $isOwner,
         ]);
     }
 }

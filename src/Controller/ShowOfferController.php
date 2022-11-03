@@ -53,6 +53,8 @@ class ShowOfferController extends AbstractController
         $offers = $doctrine->getRepository(Offers::class)->findBy(['company_id' => $id]);
         $user = $this->getUser();
 
+        $isOwner = !(count($doctrine->getRepository(Companies::class)->findBy(['user_id' => $this->getUser()->getId()])) === 0);
+
         // Place on the top the offers with more skills in common
         usort($offers, function($a, $b) use ($user) {
             $skillsA = $a->getSkills();
@@ -76,6 +78,7 @@ class ShowOfferController extends AbstractController
             'company' => $company,
             'offers' => $offers,
             'user' => $user,
+            'isOwner' => $isOwner
         ]);
     }
 }
