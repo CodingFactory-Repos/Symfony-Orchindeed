@@ -5,11 +5,14 @@ namespace App\Form;
 use App\Entity\Users;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Count;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -26,9 +29,22 @@ class RegistrationFormType extends AbstractType
             ->add('age')
             ->add('description')
             ->add('zipcode')
-            ->add('creationDate')
-            ->add('updateDate')
-            ->add('skills')
+            ->add('skills', ChoiceType::class, [
+                'choices' => $options['attr'],
+                'multiple' => true,
+                'expanded' => true,
+                'label' => 'Skills',
+                'required' => true,
+                'mapped' => false,
+                'constraints' => [
+                    new Count([
+                        'min' => 1,
+                        'max' => 5,
+                        'minMessage' => 'You must select at least {{ limit }} skills',
+                        'maxMessage' => 'You must select at most {{ limit }} skills',
+                    ]),
+                ],
+            ])
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'The password fields must match.',
@@ -57,6 +73,12 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ]);
+        $builder->add('submit', SubmitType::class, [
+            'label' => 'Create',
+            'attr' => [
+                'class' => 'btn btn-primary'
+            ]
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
