@@ -20,20 +20,19 @@ class CompaniesController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $userName = ('Bob');
+        $user = $this->getUser();
+        $lastCompanies = $entityManager->getRepository(Companies::class)->findBy([], ['id' => 'DESC'], 5);
+        $allCompanies = $entityManager->getRepository(Companies::class)->findAll();
+
         $companies = new Companies();
-        $companies->setName($userName);
-//        $companies->setUserId($this->getUser());
-        $companies->setUserId($entityManager->getRepository(Users::class)->find(3));
+        $companies->setUserId($entityManager->getRepository(Users::class)->find($user->getId()));
         $companies->setCreationDate(new \DateTime());
         $companies->setUpdateDate(new \DateTime());
-
 
         $form = $this->createForm(CompaniesType::class, $companies);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $companies = $form->getData();
             $entityManager->persist($companies);
             $entityManager->flush();
@@ -42,8 +41,10 @@ class CompaniesController extends AbstractController
         }
 
         return $this->render('companies/index.html.twig', [
-            'controller_name' => 'CompaniesController',
             'form' => $form->createView(),
+            'lastCompanies' => $lastCompanies,
+            'companies' => $allCompanies,
+            'user' => $user
         ]);
     }
 }
