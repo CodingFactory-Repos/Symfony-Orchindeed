@@ -16,9 +16,9 @@ class IndexController extends AbstractController
     #[Route('/', name: 'app_index')]
     public function index(): Response
     {
-        if(!$this->isLogged()) {
-            return $this->redirectToRoute('app_login');
-        }
+//        if(!$this->isLogged()) {
+//            return $this->redirectToRoute('app_login');
+//        }
 
         return $this->render('index/index.html.twig', [
             'controller_name' => 'IndexController',
