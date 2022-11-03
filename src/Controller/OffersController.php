@@ -72,7 +72,7 @@ class OffersController extends AbstractController
             $offer->setCompanyId($entityManager->getRepository(Companies::class)->find($form->get('company')->getData()));
             $entityManager->persist($offer);
             $entityManager->flush();
-            return $this->redirectToRoute('app_offers');
+            return $this->redirectToRoute('app_index');
         }
 
         return $this->render('offers/new.html.twig', [

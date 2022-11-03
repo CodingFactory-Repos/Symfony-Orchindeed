@@ -9,8 +9,48 @@
 </style>
 
 <div class="example-wrapper">
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    {{ form_end(form) }}
+    <div class="flex justify-center ">
+        <div class="w-1/2">
+
+            {{ form_start(form) }}
+
+            <div class="mb-6">
+                {{ form_label(form.name,null, {'label_attr': {'class': 'block mb-2 text-sm font-medium text-gray-900 '}}) }}
+                {{ form_widget(form.name, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'}}) }}
+            </div>
+            <div class="mb-6">
+                {{ form_label(form.description,null, {'label_attr': {'class': 'block mb-2 text-sm font-medium text-gray-900 '}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'}}) }}
+            </div>
+            <div class="mb-6">
+                {{ form_label(form.endDate,null, {'label_attr': {'class': 'block mb-2 text-sm font-medium text-gray-900 '}}) }}
+                {{ form_widget(form.endDate, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'}}) }}
+            </div>
+            <div class="mb-6">
+                {{ form_label(form.company,null, {'label_attr': {'class': 'block mb-2 text-sm font-medium text-gray-900 '}}) }}
+                {{ form_widget(form.company, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5'}}) }}
+            </div>
+
+            <div class="mb-6">
+                {{ form_label(form.skills,null, {'label_attr': {'class': 'block mb-2 text-sm font-medium text-gray-900 '}}) }}
+                <ul class="overflow-y-auto px-3 pb-3 h-48 text-sm text-gray-700" aria-labelledby="dropdownSearchButton">
+                    {% for skills in form.skills %}
+                    <li>
+                        <div class="flex items-center p-2 rounded hover:bg-gray-100">
+                            {{ form_widget(skills, {'attr': {'class': 'w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500'}}) }}
+                            {{ form_label(skills,null, {'label_attr': {'class': 'ml-2 w-full text-sm font-medium text-gray-900 rounded '}}) }}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="mb-6 flex justify-center">
+                {{ form_widget(form.submit, {'attr': {'class': 'text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2'}})  }}
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
 </div>
 {% endblock %}
