@@ -9,10 +9,8 @@
 </style>
 
 <div class="example-wrapper">
-
-    This friendly message is coming from:
-    <ul>
-
-    </ul>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
 </div>
 {% endblock %}
