@@ -28,6 +28,7 @@ class RegistrationFormType extends AbstractType
             ->add('zipcode')
             ->add('creationDate')
             ->add('updateDate')
+            ->add('skills')
             ->add('plainPassword', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'The password fields must match.',
