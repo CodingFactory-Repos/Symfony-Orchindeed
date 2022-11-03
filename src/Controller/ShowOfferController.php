@@ -15,9 +15,13 @@ class ShowOfferController extends AbstractController
     #[Route('/show/offer/{id}', name: 'app_show_offer')]
     public function index(EntityManagerInterface $doctrine, int $id): Response
     {
+        if($this->getUser() === null) {
+            return $this->redirectToRoute('app_login');
+        }
+
         $offer = $doctrine->getRepository(Offers::class)->find($id);
         $company = $doctrine->getRepository(Companies::class)->find($offer->getCompanyId());
-        $user = $doctrine->getRepository(Users::class)->findOneBy([], ['id' => 'DESC']);
+        $user = $this->getUser();
         $skills = $offer->getSkills();
         $skillsCount = 0;
 
@@ -41,9 +45,13 @@ class ShowOfferController extends AbstractController
     #[Route('/show/company/{id}', name: 'app_show_company')]
     public function showAllCompanyOffers(EntityManagerInterface $doctrine, int $id): Response
     {
+        if($this->getUser() === null) {
+            return $this->redirectToRoute('app_login');
+        }
+
         $company = $doctrine->getRepository(Companies::class)->find($id);
         $offers = $doctrine->getRepository(Offers::class)->findBy(['company_id' => $id]);
-        $user = $doctrine->getRepository(Users::class)->findOneBy([], ['id' => 'DESC']);
+        $user = $this->getUser();
 
         // Place on the top the offers with more skills in common
         usort($offers, function($a, $b) use ($user) {

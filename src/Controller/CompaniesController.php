@@ -16,6 +16,10 @@ class CompaniesController extends AbstractController
     #[Route('/companies/create', name: 'app_companies')]
     public function index(Request $request,EntityManagerInterface $entityManager): Response
     {//        get user name
+        if($this->getUser() === null) {
+            return $this->redirectToRoute('app_login');
+        }
+
         $userName = ('Bob');
         $companies = new Companies();
         $companies->setName($userName);

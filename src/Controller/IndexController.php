@@ -13,20 +13,15 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AbstractController
 {
-    public function isLogged(): bool
-    {
-        return $this->getUser() !== null;
-    }
-
     #[Route('/', name: 'app_index')]
     public function index(EntityManagerInterface $doctrine): Response
     {
-//        if(!$this->isLogged()) {
-//            return $this->redirectToRoute('app_login');
-//        }
+        if($this->getUser() === null) {
+            return $this->redirectToRoute('app_login');
+        }
 
-        // Get the last registered user
-        $user = $doctrine->getRepository(Users::class)->findOneBy([], ['id' => 'DESC']);
+        // Get the logged user
+        $user = $this->getUser();
         $offers = $doctrine->getRepository(Offers::class)->findAll();
         $companies = $doctrine->getRepository(Companies::class)->findAll();
 

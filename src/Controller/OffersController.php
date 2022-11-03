@@ -20,6 +20,10 @@ class OffersController extends AbstractController
     #[Route('/offers', name: 'app_offers')]
     public function index(OffersRepository $offersRepository): Response
     {
+        if($this->getUser() === null) {
+            return $this->redirectToRoute('app_login');
+        }
+
         $offers = $offersRepository->findAll();
 
         return $this->render('offers/index.html.twig', [
@@ -30,6 +34,10 @@ class OffersController extends AbstractController
     #[Route('/offers/create', name: 'app_offers')]
     public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if($this->getUser() === null) {
+            return $this->redirectToRoute('app_login');
+        }
+
         $offer = new Offers();
         // Set default values for Creation date and update date
         $offer->setCreationDate(new \DateTime());
