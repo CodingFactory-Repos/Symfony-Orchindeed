@@ -20,6 +20,15 @@ class OffersFormType extends AbstractType
             ->add('name')
             ->add('description')
             ->add('endDate');
+        // Copilot make me a select for my company
+         $builder->add('company', ChoiceType::class, [
+             'choices' => $options['empty_data'],
+             'multiple' => false,
+             'expanded' => false,
+             'label' => 'Company',
+             'required' => true,
+             'mapped' => false,
+            ]);
         $builder->add('skills', ChoiceType::class, [
             'choices' => $options['attr'],
             'multiple' => true,

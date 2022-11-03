@@ -42,14 +42,23 @@ class OffersController extends AbstractController
         // Set default values for Creation date and update date
         $offer->setCreationDate(new \DateTime());
         $offer->setUpdateDate(new \DateTime());
-        $offer->setCompanyId($entityManager->getRepository(Companies::class)->find(7));
+        $companies = $entityManager->getRepository(Companies::class)->findBy(['user_id' => $this->getUser()->getId()]);
+        if (count($companies) === 0) {
+            return $this->redirectToRoute('app_companies');
+        }
+        $companiesName = [];
+        foreach ($companies as $company) {
+            $companiesName[$company->getName()] = $company->getId();
+        }
         $skills = $entityManager->getRepository(Skills::class)->findAll();
         $skillsArray = [];
         foreach ($skills as $skill) {
             $skillsArray[$skill->getName()] = $skill->getId();
         }
         $form = $this->createForm(OffersFormType::class, $offer, [
-            'attr' => $skillsArray
+            'attr' => $skillsArray,
+            // Send the list of companies to the form
+            'empty_data' => $companiesName
         ]);
 
         $form->handleRequest($request);
@@ -60,13 +69,14 @@ class OffersController extends AbstractController
             foreach ($skills as $skill) {
                 $offer->addSkill($entityManager->getRepository(Skills::class)->find($skill));
             }
+            $offer->setCompanyId($entityManager->getRepository(Companies::class)->find($form->get('company')->getData()));
             $entityManager->persist($offer);
             $entityManager->flush();
             return $this->redirectToRoute('app_offers');
         }
 
         return $this->render('offers/new.html.twig', [
-            'form' => $form->createView(),
+            'form' => $form->createView()
         ]);
     }
 
