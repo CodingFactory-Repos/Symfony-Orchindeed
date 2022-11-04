@@ -79,6 +79,7 @@ class OffersController extends AbstractController
         $user = $this->getUser();
         $skills = $offer->getSkills();
         $skillsCount = 0;
+        $isOwner = !($offer->getCompanyId()->getUserId()->getId() === $user->getId());
 
         $userParticipate = (bool)$offer->getUsers()->contains($user);
 
@@ -96,7 +97,8 @@ class OffersController extends AbstractController
             'company' => $company,
             'skillsCount' => $skillsCount,
             'compatibilityPercentage' => $compatibilityPercentage,
-            'userParticipate' => $userParticipate
+            'userParticipate' => $userParticipate,
+            'isOwner' => $isOwner
         ]);
     }
 
