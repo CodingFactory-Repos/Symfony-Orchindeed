@@ -22,7 +22,12 @@ class IndexController extends AbstractController
 
         // Get the logged user
         $user = $this->getUser();
+
         $offers = $doctrine->getRepository(Offers::class)->findAll();
+        $offers = array_filter($offers, function ($offer) {
+            return $offer->getEndDate() > new \DateTime();
+        });
+
         $companies = $doctrine->getRepository(Companies::class)->findAll();
 
         $isOwner = !(count($doctrine->getRepository(Companies::class)->findBy(['user_id' => $this->getUser()->getId()])) === 0);
