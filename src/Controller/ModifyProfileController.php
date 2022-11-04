@@ -19,51 +19,27 @@ class ModifyProfileController extends AbstractController
     #[Route('/modify/profile', name: 'app_modify_profile')]
     public function index(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher): Response
     {
-        if($this->getUser() === null) {
+        if ($this->getUser() === null) {
             return $this->redirectToRoute('app_login');
         }
 
-//        foreach ($this->getUser()->getSkills() as $skill) {
-//            $user = $this->getUser();
-//            $user->setSkills($skill->getName());
-////            $lesSkills= $skill->getName();
-////            $user->addSkill($lesSkills);
-//
-//        }
-
-//        $skillsArray = [];
-//        foreach ($this->getUser()->getSkills() as $skill) {
-//            $skillsArray[$skill->getName()] = $skill->getId();
-//            $lesSkills[]= $skill->getName();
-//            foreach ($lesSkills as $skills) {
-//                $user = $this->getUser();
-//                $mesSkills[$skills] = $skill->getId();
-////                $user->addSkill($mesSkills);
-//
-//            }
-//        }
-
-//        $skills = new Skills();
-
-
-        $user = $this->getUser();
-        $user-> setFirstName($this->getUser()->getFirstName());
-        $user-> setLastName($this->getUser()->getLastName());
-        $user-> setEmail($this->getUser()->getEmail());
-        $user-> setAge($this->getUser()->getAge());
-        $user-> setZipCode($this->getUser()->getZipCode());
-        $user-> setEmail($this->getUser()->getEmail());
+        $user = $this->getUser()
+            ->setFirstName($this->getUser()->getFirstName())
+            ->setLastName($this->getUser()->getLastName())
+            ->setEmail($this->getUser()->getEmail())
+            ->setAge($this->getUser()->getAge())
+            ->setZipCode($this->getUser()->getZipCode())
+            ->setEmail($this->getUser()->getEmail())
 //        $user-> setPassword($userPasswordHasher->hashPassword($user, $request->request->get('password')));
-        $user-> setPassword($this->getUser()->getPassword());
-        $user-> setDescription($this->getUser()->getDescription());
-//        $user-> addSkill($this->getUser()->getSkills());
-
-
-        $user-> removeSkill($this->getUser()->getSkills()[1]);
-
-        $user->setCreationDate(new \DateTime());
-        $user->setUpdateDate(new \DateTime());
-        $user->setRoles(['ROLE_USER']);
+            ->setPassword($this->getUser()->getPassword())
+            ->setDescription($this->getUser()->getDescription());
+//        remove user skills
+        foreach ($this->getUser()->getSkills() as $skill) {
+            $user->removeSkill($skill);
+        }
+        $user->setCreationDate(new \DateTime())
+            ->setUpdateDate(new \DateTime())
+            ->setRoles(['ROLE_USER']);
         $skills = $entityManager->getRepository(Skills::class)->findAll();
         $skillsArray = [];
         foreach ($skills as $skill) {
@@ -105,9 +81,7 @@ class ModifyProfileController extends AbstractController
             'registrationForm' => $form->createView(),
             'skilll' => $skilll,
             'theUser' => $theUser,
-//            'lesSkills' => $lesSkills,
             'skillsArray' => $skillsArray,
-//            'mesSkills' => $mesSkills,
         ]);
     }
 }
