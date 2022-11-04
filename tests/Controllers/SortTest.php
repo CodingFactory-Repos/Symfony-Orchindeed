@@ -113,10 +113,10 @@ class SortTest extends WebTestCase
         $offers = [$offer1, $offer2, $offer3, $offer4];
         $noLinkedOffers = [];
 
-        foreach ($offers as $offer4) {
-            $company = $offer4->getCompanyId();
-            if (substr($company->getZipcode(), 0, 2) == substr($user->getZipcode(), 0, 2)) {
-                $offersToReturn[] = $offer4;
+        foreach ($offers as $offer) {
+            $company = $offer->getCompanyId();
+            if ($company->getCityCode() == $user->getCityCode()) {
+                $offersToReturn[] = $offer;
             }
         }
 

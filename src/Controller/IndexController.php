@@ -33,7 +33,7 @@ class IndexController extends AbstractController
         if (!$isOwner) {
             foreach ($offers as $offer) {
                 $company = $doctrine->getRepository(Companies::class)->find($offer->getCompanyId());
-                if (substr($company->getZipcode(), 0, 2) == substr($user->getZipcode(), 0, 2)) {
+                if ($company->getCityCode() == $user->getCityCode()) {
                     $offersToReturn[] = $offer;
                 }
             }
@@ -76,7 +76,7 @@ class IndexController extends AbstractController
             /* Then add to offersToReturn the offers that have not the same zipcode but that got at least 1 languages in common*/
             foreach ($offers as $offer) {
                 $company = $doctrine->getRepository(Companies::class)->find($offer->getCompanyId());
-                if (substr($company->getZipcode(), 0, 2) != substr($user->getZipcode(), 0, 2)) {
+                if ($company->getCityCode() !=$user->getCityCode()) {
                     $skills = $offer->getSkills();
                     $skillsCount = 0;
                     foreach ($skills as $skill) {

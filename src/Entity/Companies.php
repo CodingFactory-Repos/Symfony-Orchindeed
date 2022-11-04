@@ -93,6 +93,11 @@ class Companies
         return $this->zipcode;
     }
 
+    public function getCityCode(): ?int
+    {
+        return substr($this->zipcode, 0, 2);
+    }
+
     public function setZipcode(int $zipcode): self
     {
         $this->zipcode = $zipcode;

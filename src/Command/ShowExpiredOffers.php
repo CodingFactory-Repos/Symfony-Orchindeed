@@ -22,12 +22,12 @@ class ShowExpiredOffers extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln("Expired offers :");
-        $offers = $this->doctrine->getRepository(Offers::class)->findAll();
-        // Search offers by expiration date and if expired, display it
+        $offers = $this->doctrine->createQuery('SELECT o FROM App\Entity\Offers o WHERE o.endDate < :now');
+        $offers->setParameter('now', new \DateTime());
+        $offers = $offers->getResult();
+
         foreach ($offers as $offer) {
-            if ($offer->getEndDate() < new \DateTime()) {
                 $output->writeln($offer->getName());
-            }
         }
         $output->writeln("End of expired offers");
 

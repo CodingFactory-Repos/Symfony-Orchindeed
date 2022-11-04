@@ -31,9 +31,9 @@ class ShowNoMatchOffers extends Command
             // With offer.getCompanyId() get the company  that posted the offer
             $company = $this->doctrine->getRepository(Companies::class)->find($offer->getCompanyId());
             // Get zipcode of the company (split only 2 first numbers)
-            $companyZipcode = substr($company->getZipcode(), 0, 2);
+            $companyZipcode = $company->getCityCode();
             foreach ($users as $user) {
-                $userZipcode = substr($user->getZipcode(), 0, 2);
+                $userZipcode = $user->getCityCode();
                 if (!array_intersect($offer->getSkills(), $user->getSkills()) && $companyZipcode != $userZipcode) {
                     $counter++;
                 }
