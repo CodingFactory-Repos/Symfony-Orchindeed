@@ -30,12 +30,18 @@ class ShowNoMatchOffers extends Command
             $counter = 0;
             // With offer.getCompanyId() get the company  that posted the offer
             $company = $this->doctrine->getRepository(Companies::class)->find($offer->getCompanyId());
-            // Get zipcode of the company (split only 2 first numbers)
-            $companyZipcode = $company->getCityCode();
             foreach ($users as $user) {
-                $userZipcode = $user->getCityCode();
-                if (!array_intersect($offer->getSkills(), $user->getSkills()) && $companyZipcode != $userZipcode) {
-                    $counter++;
+                $userSkills = $user->getSkills();
+                $offerSkills = $offer->getSkills();
+                // If there is no match between user and offer, increment counter
+
+                // For each user skills and offer skills if there is a match, increment counter
+                foreach ($userSkills as $userSkill) {
+                    foreach ($offerSkills as $offerSkill) {
+                        if ($userSkill->getName() === $offerSkill->getName()) {
+                            $counter++;
+                        }
+                    }
                 }
             }
             if ($counter == count($users)) {
