@@ -37,7 +37,7 @@ class IndexController extends AbstractController
                 }
             }
 
-            // Check if the user have more 3 skills in common with the offer
+            // Check if the user have at least 1 skill in common with the offer
             foreach ($offersInSameZipcode as $key => $offer) {
                 $skills = $offer->getSkills();
                 $skillsCount = 0;
