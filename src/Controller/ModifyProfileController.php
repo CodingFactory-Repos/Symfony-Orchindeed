@@ -23,13 +23,28 @@ class ModifyProfileController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        foreach ($this->getUser()->getSkills() as $skill) {
-            $user = $this->getUser();
-            $user->addSkill($skill->getName());
-//            $lesSkills= $skill->getName();
-//            $user->addSkill($lesSkills);
+//        foreach ($this->getUser()->getSkills() as $skill) {
+//            $user = $this->getUser();
+//            $user->setSkills($skill->getName());
+////            $lesSkills= $skill->getName();
+////            $user->addSkill($lesSkills);
+//
+//        }
 
-        }
+//        $skillsArray = [];
+//        foreach ($this->getUser()->getSkills() as $skill) {
+//            $skillsArray[$skill->getName()] = $skill->getId();
+//            $lesSkills[]= $skill->getName();
+//            foreach ($lesSkills as $skills) {
+//                $user = $this->getUser();
+//                $mesSkills[$skills] = $skill->getId();
+////                $user->addSkill($mesSkills);
+//
+//            }
+//        }
+
+//        $skills = new Skills();
+
 
         $user = $this->getUser();
         $user-> setFirstName($this->getUser()->getFirstName());
@@ -42,6 +57,10 @@ class ModifyProfileController extends AbstractController
         $user-> setPassword($this->getUser()->getPassword());
         $user-> setDescription($this->getUser()->getDescription());
 //        $user-> addSkill($this->getUser()->getSkills());
+
+
+        $user-> removeSkill($this->getUser()->getSkills()[1]);
+
         $user->setCreationDate(new \DateTime());
         $user->setUpdateDate(new \DateTime());
         $user->setRoles(['ROLE_USER']);
@@ -86,7 +105,9 @@ class ModifyProfileController extends AbstractController
             'registrationForm' => $form->createView(),
             'skilll' => $skilll,
             'theUser' => $theUser,
-            'lesSkills' => $lesSkills,
+//            'lesSkills' => $lesSkills,
+            'skillsArray' => $skillsArray,
+//            'mesSkills' => $mesSkills,
         ]);
     }
 }

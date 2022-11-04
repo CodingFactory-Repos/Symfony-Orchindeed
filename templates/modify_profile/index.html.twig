@@ -11,13 +11,16 @@
 <div class="example-wrapper">
     {{ form_start(registrationForm) }}
     {{ form_widget(registrationForm) }}
-    <button type="submit" class="btn btn-primary">Modifier</button>
+{#    <button type="submit" class="btn btn-primary">Modifier</button>#}
     {{ form_end(registrationForm) }}
     {{ dump(skilll) }}
     {% for skills in skilll %}
         {{ skills.name }}
     {% endfor %}
-    {{ dump(theUser) }}
-    {{ dump(lesSkills) }}
+{#    {{ dump(theUser) }}#}
+{#    {{ dump(lesSkills) }}#}
+{#    {{ dump(skillsArray) }}#}
+{#    {{ dump(mesSkills) }}#}
+
 </div>
 {% endblock %}

@@ -279,7 +279,7 @@ class Users implements UserInterface ,PasswordAuthenticatedUserInterface
 
         return $this;
     }
-//
+
 //    public function setSkills(array $skills): self
 //    {
 //        $this->skills = $skills;
@@ -287,11 +287,10 @@ class Users implements UserInterface ,PasswordAuthenticatedUserInterface
 //        return $this;
 //    }
 
-    public function removeSkill(Skills $skill): self
+
+    public function removeSkill($skill): self
     {
-        if ($this->skills->removeElement($skill)) {
-            $skill->removeUser($this);
-        }
+       $this->skills->removeElement($skill);
 
         return $this;
     }
