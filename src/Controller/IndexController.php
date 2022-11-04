@@ -26,19 +26,20 @@ class IndexController extends AbstractController
         $companies = $doctrine->getRepository(Companies::class)->findAll();
 
         $isOwner = !(count($doctrine->getRepository(Companies::class)->findBy(['user_id' => $this->getUser()->getId()])) === 0);
-        $offersInSameZipcode = [];
+        $offersToReturn = [];
         $myCompanies = [];
+        $usersInCompany = [];
 
         if (!$isOwner) {
             foreach ($offers as $offer) {
                 $company = $doctrine->getRepository(Companies::class)->find($offer->getCompanyId());
-                if (substr($company->getZipcode(), 0, 2) == substr($user->getZipcode(), 0, 2)) {
-                    $offersInSameZipcode[] = $offer;
+                if ($company->getCityCode() == $user->getCityCode()) {
+                    $offersToReturn[] = $offer;
                 }
             }
 
             // Check if the user have at least 1 skill in common with the offer
-            foreach ($offersInSameZipcode as $key => $offer) {
+            foreach ($offersToReturn as $key => $offer) {
                 $skills = $offer->getSkills();
                 $skillsCount = 0;
                 foreach ($skills as $skill) {
@@ -47,12 +48,14 @@ class IndexController extends AbstractController
                     }
                 }
                 if ($skillsCount < 1) {
-                    unset($offersInSameZipcode[$key]);
+                    unset($offersToReturn[$key]);
                 }
             }
 
+
+
             // Place on the top the offers with more skills in common
-            usort($offersInSameZipcode, function ($a, $b) use ($user) {
+            usort($offersToReturn, function ($a, $b) use ($user) {
                 $skillsA = $a->getSkills();
                 $skillsB = $b->getSkills();
                 $skillsCountA = 0;
@@ -69,17 +72,67 @@ class IndexController extends AbstractController
                 }
                 return $skillsCountB <=> $skillsCountA;
             });
+
+            /* Then add to offersToReturn the offers that have not the same zipcode but that got at least 1 languages in common*/
+            foreach ($offers as $offer) {
+                $company = $doctrine->getRepository(Companies::class)->find($offer->getCompanyId());
+                if ($company->getCityCode() !=$user->getCityCode()) {
+                    $skills = $offer->getSkills();
+                    $skillsCount = 0;
+                    foreach ($skills as $skill) {
+                        if ($user->getSkills()->contains($skill)) {
+                            $skillsCount++;
+                        }
+                    }
+                    if ($skillsCount >= 1) {
+                        $noLinkedOffers[] = $offer;
+                    }
+                }
+
+                /* Sort noLinkedOffers  then add it to offersToReturn */
+                usort($noLinkedOffers, function ($a, $b) use ($user) {
+                    $skillsA = $a->getSkills();
+                    $skillsB = $b->getSkills();
+                    $skillsCountA = 0;
+                    $skillsCountB = 0;
+                    foreach ($skillsA as $skill) {
+                        if ($user->getSkills()->contains($skill)) {
+                            $skillsCountA++;
+                        }
+                    }
+                    foreach ($skillsB as $skill) {
+                        if ($user->getSkills()->contains($skill)) {
+                            $skillsCountB++;
+                        }
+                    }
+                    return $skillsCountB <=> $skillsCountA;
+                });
+            }
+            foreach ($noLinkedOffers as $newOffer) {
+                $offersToReturn[] = $newOffer;
+            }
         } else {
             $myCompanies = $doctrine->getRepository(Companies::class)->findBy(['user_id' => $this->getUser()->getId()]);
+            // Get all users have participated to the offers of the company
+            foreach ($myCompanies as $company) {
+                $offers = $doctrine->getRepository(Offers::class)->findBy(['company_id' => $company->getId()]);
+                foreach ($offers as $offer) {
+                    $users = $offer->getUsers();
+                    foreach ($users as $user) {
+                        $usersInCompany[] = $user;
+                    }
+                }
+            }
         }
 
-        // Return $user and $offersInSameZipcode (with the companies) to the view
+        // Return $user and $offersToReturn (with the companies) to the view
         return $this->render('index/index.html.twig', [
             'user' => $user,
-            'offers' => $offersInSameZipcode,
+            'offers' => $offersToReturn,
             'companies' => $companies,
             'myCompanies' => $myCompanies,
             'isOwner' => $isOwner,
+            'usersInCompany' => $usersInCompany
         ]);
     }
 }

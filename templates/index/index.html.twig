@@ -81,23 +81,69 @@
                         </div>
                     </div>
                 </div>
+
+                <form class="mt-10" action="{{ path('app_search', {'search': 'Banania'}) }}" method="post" id="searchForm">
+                    <label for="default-search"
+                           class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300">Search</label>
+                    <div class="relative">
+                        <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none"
+                                 stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                        <input type="search" id="default-search"
+                               class="block p-4 pl-10 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                               placeholder="Search..." required=""
+                               onkeypress="document.getElementById('searchForm').action = '{{ path('app_search') }}/' + this.value">
+                        <button type="submit"
+                                class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            Search
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
         <div class="w-5/6 flex justify-between">
-            <div class="w-8/12">
-                <h2 class="text-5xl font-bold italic">Les entreprises</h2>
-                <p class="text-lg italic">Vous en cherchez une en particulier ?</p>
-                {% for company in companies %}
-                    <a href="{{ path('app_show_company', {'id': company.id}) }}" class="flex flex-col items-center bg-white rounded-lg my-5 border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100">
-                        <img class="object-cover w-32 p-5 rounded-3xl"
-                             src="https://logo.clearbit.com/{{ company.name }}.com" alt="">
-                        <div class="flex flex-col justify-between p-4 leading-normal">
-                            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ company.name }}</h5>
-                            <p class="mb-3 font-normal text-gray-700">{{ company.description }}</p>
-                        </div>
-                    </a>
-                {% endfor %}
-            </div>
+            {% if(isOwner == false) %}
+                <div class="w-8/12">
+                    <h2 class="text-5xl font-bold italic">Les entreprises</h2>
+                    <p class="text-lg italic">Vous en cherchez une en particulier ?</p>
+                    {% for company in companies %}
+                        <a href="{{ path('app_show_company', {'id': company.id}) }}"
+                           class="flex flex-col items-center bg-white rounded-lg my-5 border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100">
+                            <img class="object-cover w-32 p-5 rounded-3xl"
+                                 src="https://logo.clearbit.com/{{ company.name }}.com" alt="">
+                            <div class="flex flex-col justify-between p-4 leading-normal">
+                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ company.name }}</h5>
+                                <p class="mb-3 font-normal text-gray-700">{{ company.description }}</p>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="w-8/12">
+                    <h2 class="text-5xl font-bold italic">Tout mes candidats</h2>
+                    <p class="text-lg italic">Vous en cherchez un en particulier ?</p>
+                    {% for user in usersInCompany %}
+                        <a href="#"
+                           class="flex flex-col items-center bg-white rounded-lg my-5 border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100">
+                            <img class="object-cover w-32 p-5 rounded-3xl"
+                                 src="https://cdn-icons-png.flaticon.com/512/16/16363.png" alt="">
+                            <div class="flex flex-col justify-between p-4 leading-normal">
+                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ user.firstName }} {{ user.lastName }}
+                                    <p class="mb-3 font-normal text-sm text-gray-700">{{ user.description }}</p>
+                                    <div>
+                                        {% for skill in user.skills %}
+                                            <span class="inline-block bg-green-100 rounded-full px-3 py-1 text-sm font-semibold text-gray-700">#{{ skill.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
