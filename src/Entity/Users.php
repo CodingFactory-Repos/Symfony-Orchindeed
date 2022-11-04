@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UsersRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-class Users implements UserInterface ,PasswordAuthenticatedUserInterface
+class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -280,17 +280,11 @@ class Users implements UserInterface ,PasswordAuthenticatedUserInterface
         return $this;
     }
 
-//    public function setSkills(array $skills): self
-//    {
-//        $this->skills = $skills;
-//
-//        return $this;
-//    }
-
-
-    public function removeSkill($skill): self
+    public function removeSkill(Skills $skill): self
     {
-       $this->skills->removeElement($skill);
+        if ($this->skills->removeElement($skill)) {
+            $skill->removeUser($this);
+        }
 
         return $this;
     }
