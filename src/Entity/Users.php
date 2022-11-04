@@ -279,6 +279,13 @@ class Users implements UserInterface ,PasswordAuthenticatedUserInterface
 
         return $this;
     }
+//
+//    public function setSkills(array $skills): self
+//    {
+//        $this->skills = $skills;
+//
+//        return $this;
+//    }
 
     public function removeSkill(Skills $skill): self
     {
