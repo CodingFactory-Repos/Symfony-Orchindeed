@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Companies;
+use App\Entity\Offers;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,11 +19,29 @@ class ProfileController extends AbstractController
         }
         $user = $this->getUser();
 
-        $companies = $entityManager->getRepository(Companies::class)->findBy(['user_id' => $this->getUser()->getId()]);
+        $offers = $entityManager->getRepository(Offers::class)->findAll();
+
+        $userCompanies = $entityManager->getRepository(Companies::class)->findBy(['user_id' => $this->getUser()->getId()]);
+
+        /* Check for all offers who participates and if user is in it, stock it in an array */
+        $userOffers = [];
+        foreach ($offers as $offer) {
+            $participants = $offer->getUsers();
+            foreach ($participants as $participant) {
+                if ($participant->getId() === $user->getId()) {
+                    $userOffers[] = $offer;
+                }
+            }
+        }
+
+
+
+
 
         return $this->render('profile/index.html.twig', [
             'user' => $user,
-            'companies' => $companies,
+            'companies' => $userCompanies,
+            'offers' => $userOffers,
 
         ]);
     }

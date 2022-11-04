@@ -29,8 +29,8 @@
         </div>
 
         {% if companies|length > 0 %}
-            {% for company in companies %}
                 <h2 class="text-2xl font-bold mt-4">Vos entreprises !</h2>
+            {% for company in companies %}
                 <a href="{{ path('app_show_company', {'id': company.id}) }}" class="flex flex-col items-center bg-white rounded-lg my-5 border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100">
                     <img class="object-cover w-32 p-5 rounded-3xl"
                          src="https://logo.clearbit.com/{{ company.name }}.com" alt="">
@@ -40,6 +40,20 @@
                     </div>
                 </a>
             {% endfor %}
+        {% elseif offers|length > 0 %}
+                <h2 class="text-2xl font-bold mt-4">Vos offres auxquelles vous avez postulé !</h2>
+            {% for offer in offers %}
+                <a href="{{ path('app_show_offer', {'id': offer.id}) }}" class="flex flex-col items-center bg-white rounded-lg my-5 border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100">
+                    <img class="object-cover w-32 p-5 rounded-3xl"
+                            src="https://logo.clearbit.com/{{ offer.getCompanyId().getName() }}.com" alt="">
+                    <div class="flex flex-col justify-between p-4 leading-normal">
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ offer.getCompanyId().getName() }}</h5>
+                        <p class="mb-3 font-normal text-gray-700">{{ offer.description }}</p>
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <h2 class="text-2xl font-bold mt-4">Vous n'avez pas encore d'entreprise ou d'offre !</h2>
         {% endif %}
 
     </div>
