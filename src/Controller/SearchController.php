@@ -59,12 +59,31 @@ class SearchController extends AbstractController
         // Check if the user have a company
         $isOwner = !(count($doctrine->getRepository(Companies::class)->findBy(['user_id' => $this->getUser()->getId()])) === 0);
 
+        // Search all users have participated in the offer in the company user is owner
+        $usersInCompany = [];
+        if ($isOwner) {
+            $company = $doctrine->getRepository(Companies::class)->findOneBy(['user_id' => $this->getUser()->getId()]);
+            $offers = $doctrine->getRepository(Offers::class)->findBy(['company_id' => $company->getId()]);
+            foreach ($offers as $offer) {
+                $users = $offer->getUsers();
+                foreach ($users as $user) {
+                    if (!in_array($user, $usersInCompany)) {
+                        // Check if the user is searched in the search bar (firstname or lastname)
+                        if (str_contains($user->getFirstName(), $search) || str_contains($user->getLastName(), $search)) {
+                            $usersInCompany[] = $user;
+                        }
+                    }
+                }
+            }
+        }
+
         return $this->render('search/index.html.twig', [
             'user' => $user,
             'companies' => $companiesInSearch,
             'offers' => $offersInSearch,
             'searched' => $search,
             'isOwner' => $isOwner,
+            'usersInCompany' => $usersInCompany,
         ]);
     }
 }

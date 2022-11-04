@@ -28,7 +28,7 @@ class IndexController extends AbstractController
         $isOwner = !(count($doctrine->getRepository(Companies::class)->findBy(['user_id' => $this->getUser()->getId()])) === 0);
         $offersToReturn = [];
         $myCompanies = [];
-        $noLinkedOffers = [];
+        $usersInCompany = [];
 
         if (!$isOwner) {
             foreach ($offers as $offer) {
@@ -113,6 +113,16 @@ class IndexController extends AbstractController
             }
         } else {
             $myCompanies = $doctrine->getRepository(Companies::class)->findBy(['user_id' => $this->getUser()->getId()]);
+            // Get all users have participated to the offers of the company
+            foreach ($myCompanies as $company) {
+                $offers = $doctrine->getRepository(Offers::class)->findBy(['company_id' => $company->getId()]);
+                foreach ($offers as $offer) {
+                    $users = $offer->getUsers();
+                    foreach ($users as $user) {
+                        $usersInCompany[] = $user;
+                    }
+                }
+            }
         }
 
         // Return $user and $offersToReturn (with the companies) to the view
@@ -122,6 +132,7 @@ class IndexController extends AbstractController
             'companies' => $companies,
             'myCompanies' => $myCompanies,
             'isOwner' => $isOwner,
+            'usersInCompany' => $usersInCompany
         ]);
     }
 }
