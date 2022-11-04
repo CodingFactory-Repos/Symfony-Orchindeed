@@ -6,21 +6,40 @@ use App\Entity\Skills;
 use App\Entity\Users;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
 
-class RegistrationController extends AbstractController
+
+class ModifyProfileController extends AbstractController
 {
-    #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    #[Route('/modify/profile', name: 'app_modify_profile')]
+    public function index(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher): Response
     {
-        $user = new Users();
-        $user->setCreationDate(new \DateTime());
-        $user->setUpdateDate(new \DateTime());
-        $user->setRoles(['ROLE_USER']);
+        if ($this->getUser() === null) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $user = $this->getUser()
+            ->setFirstName($this->getUser()->getFirstName())
+            ->setLastName($this->getUser()->getLastName())
+            ->setEmail($this->getUser()->getEmail())
+            ->setAge($this->getUser()->getAge())
+            ->setZipCode($this->getUser()->getZipCode())
+            ->setEmail($this->getUser()->getEmail())
+//        $user-> setPassword($userPasswordHasher->hashPassword($user, $request->request->get('password')));
+            ->setPassword($this->getUser()->getPassword())
+            ->setDescription($this->getUser()->getDescription());
+//        remove user skills
+        foreach ($this->getUser()->getSkills() as $skill) {
+            $user->removeSkill($skill);
+        }
+        $user->setCreationDate(new \DateTime())
+            ->setUpdateDate(new \DateTime())
+            ->setRoles(['ROLE_USER']);
         $skills = $entityManager->getRepository(Skills::class)->findAll();
         $skillsArray = [];
         foreach ($skills as $skill) {
@@ -30,6 +49,7 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(RegistrationFormType::class, $user, [
             'attr' => $skillsArray
         ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -54,8 +74,14 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        return $this->render('registration/register.html.twig', [
+        $skilll = $this->getUser()->getSkills();
+        $theUser = $user;
+        $form->handleRequest($request);
+        return $this->render('modify_profile/index.html.twig', [
             'registrationForm' => $form->createView(),
+            'skilll' => $skilll,
+            'theUser' => $theUser,
+            'skillsArray' => $skillsArray,
         ]);
     }
 }
