@@ -29,6 +29,7 @@ class IndexController extends AbstractController
         $offersToReturn = [];
         $myCompanies = [];
         $usersInCompany = [];
+        $noLinkedOffers = [];
 
         if (!$isOwner) {
             foreach ($offers as $offer) {
