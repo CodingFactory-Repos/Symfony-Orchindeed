@@ -10,7 +10,6 @@ use App\Entity\Users;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 
-
 class SortTest extends WebTestCase
 {
     public function testSortOffers()
@@ -73,7 +72,7 @@ class SortTest extends WebTestCase
         /* Create three offers linked to this company */
 
         $offer1 = new Offers();
-        $offer1->setTitle('testPartialMatch');
+        $offer1->setName('testPartialMatch');
         $offer1->setDescription('testPartialMatch');
         $offer1->setCompanyId($company);
         $offer1->setCreationDate(new \DateTime());
@@ -83,7 +82,7 @@ class SortTest extends WebTestCase
         $offer1->addSkill($skill4);
 
         $offer2 = new Offers();
-        $offer2->setTitle('testFullMatch');
+        $offer2->setName('testFullMatch');
         $offer2->setDescription('testFullMatch');
         $offer2->setCompanyId($company);
         $offer2->setCreationDate(new \DateTime());
@@ -93,7 +92,7 @@ class SortTest extends WebTestCase
         $offer2->addSkill($skill3);
 
         $offer3 = new Offers();
-        $offer3->setTitle('testNoMatch');
+        $offer3->setName('testNoMatch');
         $offer3->setDescription('testNoMatch');
         $offer3->setCompanyId($company);
         $offer3->setCreationDate(new \DateTime());
@@ -101,7 +100,7 @@ class SortTest extends WebTestCase
         $offer3->addSkill($skill4);
 
         $offer4 = new Offers();
-        $offer4->setTitle('testOtherZipcode');
+        $offer4->setName('testOtherZipcode');
         $offer4->setDescription('testOtherZipcode');
         $offer4->setCompanyId($company2);
         $offer4->setCreationDate(new \DateTime());
@@ -112,16 +111,17 @@ class SortTest extends WebTestCase
 
 
         $offers = [$offer1, $offer2, $offer3, $offer4];
+        $noLinkedOffers = [];
 
         foreach ($offers as $offer) {
             $company = $offer->getCompanyId();
-            if (substr($company->getZipcode(), 0, 2) == substr($user->getZipcode(), 0, 2)) {
-                $offersInSameZipcode[] = $offer;
+            if ($company->getCityCode() == $user->getCityCode()) {
+                $offersToReturn[] = $offer;
             }
         }
 
-        foreach ($offersInSameZipcode as $key => $offer) {
-            $skills = $offer->getSkills();
+        foreach ($offersToReturn as $key => $offer4) {
+            $skills = $offer4->getSkills();
             $skillsCount = 0;
             foreach ($skills as $skill) {
                 if ($user->getSkills()->contains($skill)) {
@@ -129,11 +129,11 @@ class SortTest extends WebTestCase
                 }
             }
             if ($skillsCount < 1) {
-                unset($offersInSameZipcode[$key]);
+                unset($offersToReturn[$key]);
             }
         }
 
-        usort($offersInSameZipcode, function ($a, $b) use ($user) {
+        usort($offersToReturn, function ($a, $b) use ($user) {
             $skillsA = $a->getSkills();
             $skillsB = $b->getSkills();
             $skillsCountA = 0;
@@ -151,23 +151,49 @@ class SortTest extends WebTestCase
             return $skillsCountB <=> $skillsCountA;
         });
 
-        $this->assertEquals($offersInSameZipcode[0], $offer2);
-        $this->assertEquals($offersInSameZipcode[1], $offer1);
-        $this->assertNotContains($offer3, $offersInSameZipcode);
-        $this->assertNotContains($offer4, $offersInSameZipcode);
+        /* Then add to offersToReturn the offers that have not the same zipcode but that got at least 1 languages in common*/
+        foreach ($offers as $offer4) {
+            $company = $offer4->getCompanyId();
+            if (substr($company->getZipcode(), 0, 2) != substr($user->getZipcode(), 0, 2)) {
+                $skills = $offer4->getSkills();
+                $skillsCount = 0;
+                foreach ($skills as $skill) {
+                    if ($user->getSkills()->contains($skill)) {
+                        $skillsCount++;
+                    }
+                }
+                if ($skillsCount >= 1) {
+                    $noLinkedOffers[] = $offer4;
+                }
+            }
 
+            /* Sort noLinkedOffers  then add it to offersToReturn */
+            usort($noLinkedOffers, function ($a, $b) use ($user) {
+                $skillsA = $a->getSkills();
+                $skillsB = $b->getSkills();
+                $skillsCountA = 0;
+                $skillsCountB = 0;
+                foreach ($skillsA as $skill) {
+                    if ($user->getSkills()->contains($skill)) {
+                        $skillsCountA++;
+                    }
+                }
+                foreach ($skillsB as $skill) {
+                    if ($user->getSkills()->contains($skill)) {
+                        $skillsCountB++;
+                    }
+                }
+                return $skillsCountB <=> $skillsCountA;
+            });
+        }
+        foreach ($noLinkedOffers as $newOffer) {
+            $offersToReturn[] = $newOffer;
+        }
 
-
-
-
-
-
-
-
-
-
-
-
+        $this->assertEquals($offersToReturn[0], $offer2);
+        $this->assertEquals($offersToReturn[1], $offer1);
+        $this->assertEquals($offersToReturn[2], $offer4);
+        $this->assertNotContains($offer3, $offersToReturn);
 
 
     }

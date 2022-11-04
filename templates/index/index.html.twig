@@ -18,6 +18,8 @@
                                 <div class="flex flex-col justify-between p-4 leading-normal">
                                     <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{{ offer.name }}
                                        <span class="italic text-lg"> chez {{ offer.companyId.name }}</span></h5>
+                                        <span class="text-xs text-gray-500">{{ offer.companyId.zipcode }}</span>
+
                                     <p class="mb-3 font-normal text-gray-700">{{ offer.description }}</p>
                                     <div>
                                         {% for skill in offer.skills %}
@@ -60,6 +62,7 @@
                     <div class="flex flex-col items-center py-10">
                         <h5 class="mb-1 text-xl font-medium text-gray-900">{{ user.firstName }} {{ user.lastName }}</h5>
                         <span class="text-sm text-gray-500">{{ user.description }}</span>
+                        <span class="text-xs text-gray-500">{{ user.zipcode }}</span>
 
                         <div class="my-4">
                             {% for skill in user.skills %}
